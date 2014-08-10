@@ -55,14 +55,17 @@ class ParserCheckCommand(sublime_plugin.TextCommand):
             # Add each selection to the view
 			for region in new_regions: view.sel().add(region)
 	def findClosest(self,word):
-		match = word + "**"
-		distance = 5
+		tmp = word.split(" ")
+		compare = tmp.pop(0)
+		args = " ".join(tmp)
+		match = compare + "**"
+		distance = 10
 		for c in ParserCheckCommand.parserCalls:
-			d = self.findDistance(word,c)
+			d = self.findDistance(compare,c)
 			if (d<distance):
 				match = c
 				distance = d
-		return match
+		return match + args
 
 
 	def findDistance(self,first,second):
