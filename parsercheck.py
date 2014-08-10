@@ -65,7 +65,7 @@ class ParserCheckCommand(sublime_plugin.TextCommand):
 			if (d<distance):
 				match = c
 				distance = d
-		return match + args
+		return match + " " + args
 
 
 	def findDistance(self,first,second):
