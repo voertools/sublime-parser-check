@@ -4,8 +4,9 @@ class ParserCheckCommand(sublime_plugin.TextCommand):
 	original_regions = []
 	history = [ "" ]
 	history_index = 0
+	parserCalls = ['pc.crotch','pc.groin','pc.cock','pc.cockBiggest','pc.biggestCock','pc.cockHead','pc.cockHeadBiggest','pc.biggestCockHead','pc.cockSmallest','pc.smallestCock','pc.sheath','pc.biggestSheath','pc.sheathBiggest','pc.knot','pc.cocks','pc.cocksLight','pc.multiCocks','pc.cockNounComplex','pc.cockNounSimple','pc.cockColor','pc.dickColor','pc.cockHeads','pc.eachCockHead','pc.eachCock','pc.oneCock','pc.sack','pc.ball','pc.balls','pc.vaginaColor','pc.cuntColor','pc.vagina','pc.cunt','pc.pussy','pc.vaginas','pc.cunts','pc.pussies','pc.eachVagina','pc.eachVagina','pc.oneVagina','pc.vagOrAss','pc.pussyOrAsshole','pc.clit','pc.clits','pc.eachClit','pc.oneClit','pc.nipple','pc.nipples','pc.milkyNipple','pc.milkyNipples','pc.nippleCock','pc.dickNipple','pc.nippleCocks','pc.dickNipples','pc.nippleColor','pc.chest','pc.fullChest','pc.biggestBreastDescript','pc.breasts','pc.breastCupSize','pc.tailCock','pc.cockTail','pc.tailgina','pc.cuntTail','pc.tailCunt','pc.tailVagina','pc.oneTailgina','pc.oneTailCunt','pc.cum','pc.milk','pc.girlCum','pc.cumNoun','pc.milkNoun','pc.girlCumNoun','pc.cumColor','pc.milkColor','pc.girlCumColor','pc.cumVisc','pc.milkVisc','pc.girlCumVisc','pc.cumFlavor','pc.milkFlavor','pc.girlCumFlavor','pc.asshole','pc.gear','pc.armor','pc.lowerUndergarment','pc.upperUndergarment','pc.upperGarment','pc.upperGarments','pc.lowerGarment','pc.underGarment','pc.lowerGarments','pc.underGarments','pc.height','pc.race','pc.name','pc.short','pc.skinFurScales','pc.skin','pc.skinFurScalesNoun','pc.skinNoun','pc.ears','pc.ear','pc.eyes','pc.eye','pc.eyePigment','pc.eyeColor','pc.hair','pc.hairs','pc.face','pc.lips','pc.lip','pc.tonuge','pc.tail','pc.tails','pc.oneTail','pc.eachTail','pc.butt','pc.ass','pc.hip','pc.hips','pc.thigh','pc.thighs','pc.leg','pc.legs','pc.feet','pc.foot','pc.toes','pc.knees','pc.belly','pc.he','pc.she','pc.heShe','pc.him','pc.himHer','pc.his','pc.hisHer','pc.hisHers']
+
 	def run(self, edit):
-		parserCalls = ['pc.crotch','pc.groin','pc.cock','pc.cockBiggest','pc.biggestCock','pc.cockHead','pc.cockHeadBiggest','pc.biggestCockHead','pc.cockSmallest','pc.smallestCock','pc.sheath','pc.biggestSheath','pc.sheathBiggest','pc.knot','pc.cocks','pc.cocksLight','pc.multiCocks','pc.cockNounComplex','pc.cockNounSimple','pc.cockColor','pc.dickColor','pc.cockHeads','pc.eachCockHead','pc.eachCock','pc.oneCock','pc.sack','pc.ball','pc.balls','pc.vaginaColor','pc.cuntColor','pc.vagina','pc.cunt','pc.pussy','pc.vaginas','pc.cunts','pc.pussies','pc.eachVagina','pc.eachVagina','pc.oneVagina','pc.vagOrAss','pc.pussyOrAsshole','pc.clit','pc.clits','pc.eachClit','pc.oneClit','pc.nipple','pc.nipples','pc.milkyNipple','pc.milkyNipples','pc.nippleCock','pc.dickNipple','pc.nippleCocks','pc.dickNipples','pc.nippleColor','pc.chest','pc.fullChest','pc.biggestBreastDescript','pc.breasts','pc.breastCupSize','pc.tailCock','pc.cockTail','pc.tailgina','pc.cuntTail','pc.tailCunt','pc.tailVagina','pc.oneTailgina','pc.oneTailCunt','pc.cum','pc.milk','pc.girlCum','pc.cumNoun','pc.milkNoun','pc.girlCumNoun','pc.cumColor','pc.milkColor','pc.girlCumColor','pc.cumVisc','pc.milkVisc','pc.girlCumVisc','pc.cumFlavor','pc.milkFlavor','pc.girlCumFlavor','pc.asshole','pc.gear','pc.armor','pc.lowerUndergarment','pc.upperUndergarment','pc.upperGarment','pc.upperGarments','pc.lowerGarment','pc.underGarment','pc.lowerGarments','pc.underGarments','pc.height','pc.race','pc.name','pc.short','pc.skinFurScales','pc.skin','pc.skinFurScalesNoun','pc.skinNoun','pc.ears','pc.ear','pc.eyes','pc.eye','pc.eyePigment','pc.eyeColor','pc.hair','pc.hairs','pc.face','pc.lips','pc.lip','pc.tonuge','pc.tail','pc.tails','pc.oneTail','pc.eachTail','pc.butt','pc.ass','pc.hip','pc.hips','pc.thigh','pc.thighs','pc.leg','pc.legs','pc.feet','pc.foot','pc.toes','pc.knees','pc.belly','pc.he','pc.she','pc.heShe','pc.him','pc.himHer','pc.his','pc.hisHer','pc.hisHers']
 		ParserCheckCommand.original_regions = []
 		for region in self.view.sel(): 
 			ParserCheckCommand.original_regions = [ sublime.Region(0, self.view.size()) ]
@@ -19,8 +20,8 @@ class ParserCheckCommand(sublime_plugin.TextCommand):
 
 		for sel in self.view.sel():
 			s = self.view.substr(sel)
-			if s not in parserCalls:
-				self.view.replace(edit,sel,s+"**")
+			if s not in ParserCheckCommand.parserCalls:
+				self.view.replace(edit,sel,self.findClosest(s))
 
 	def search(self,regex):
         # Cache view for speed
@@ -53,3 +54,35 @@ class ParserCheckCommand(sublime_plugin.TextCommand):
 		if len(new_regions): 
             # Add each selection to the view
 			for region in new_regions: view.sel().add(region)
+	def findClosest(self,word):
+		match = word + "**"
+		distance = 5
+		for c in ParserCheckCommand.parserCalls:
+			d = self.findDistance(word,c)
+			if (d<distance):
+				match = c
+				distance = d
+		return match
+
+
+	def findDistance(self,first,second):
+		if len(first) > len(second):
+			first, second = second, first
+		if len(second) == 0:
+			return len(first)
+		first_length = len(first) + 1
+		second_length = len(second) + 1
+		distance_matrix = [[0] * second_length for x in range(first_length)]
+		for i in range(first_length):
+			distance_matrix[i][0] = i
+		for j in range(second_length):
+			distance_matrix[0][j]=j
+		for i in xrange(1, first_length):
+			for j in range(1, second_length):
+				deletion = distance_matrix[i-1][j] + 1
+				insertion = distance_matrix[i][j-1] + 1
+				substitution = distance_matrix[i-1][j-1]
+				if first[i-1] != second[j-1]:
+					substitution += 1
+	 			distance_matrix[i][j] = min(insertion, deletion, substitution)
+		return distance_matrix[first_length-1][second_length-1]
